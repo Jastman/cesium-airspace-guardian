@@ -50,3 +50,7 @@ Built with **CesiumJS** and the **OpenSky Network API**, this application demons
 1.  Clone the repository.
 2.  Run `npm install`.
 3.  Run `npm run dev` to launch the local server.
+
+## 📡 Connect
+**Created by Jake Steinerman**
+[LinkedIn](https://www.linkedin.com/in/jasteinerman/) | [GitHub](https://github.com/Jastman)
