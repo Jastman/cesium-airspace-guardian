@@ -363,8 +363,8 @@ const FALLBACK_ASSET_ID = 4423404; // Paper Airplane
 // --- AIRCRAFT ASSET MAP ---
 const AIRCRAFT_ASSETS = {
   // Generic / Default
-  "Helicopter / UAV": 4417159, // Use Seahawk model (known working)
-  "Bell 429": 4417159,
+  "Helicopter / UAV": 4423338, // Bell 429 (Generic Heli)
+  "Bell 429": 4423338,
   "General Aviation (Cessna/Piper)": 4423405,
 
   // Commercial Liners
