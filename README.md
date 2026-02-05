@@ -2,10 +2,14 @@
 
 **Deployment Link:** [https://jastman.github.io/cesium-airspace-guardian/](https://jastman.github.io/cesium-airspace-guardian/)
 
+![NYC Airspace Guardian Hero](public/assets/top-view.png)
+
 ## 🎯 Executive Summary
 **NYC Airspace Guardian** is a high-fidelity **Common Operating Picture (COP)** dashboard designed for urban monitoring. It fuses photorealistic 3D geospatial data with live signal intelligence to provide a real-time view of the New York City airspace.
 
 Built with **CesiumJS** and the **OpenSky Network API**, this application demonstrates how web technologies can deliver mission-critical visualization capabilities with a "Lattice OS" aesthetic—prioritizing clarity, performance, and situational awareness.
+
+![Threat Isolation Feature](public/assets/threats.png)
 
 ## 🛠️ Key Capabilities
 
