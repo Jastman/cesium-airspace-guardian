@@ -1,0 +1,570 @@
+:root {
+  --bg-color: #050505;
+  --text-color: #EAEAEA;
+  --accent-cyan: #00F0FF;
+  --accent-red: #FF3333;
+  --accent-amber: #FFCC00;
+  --panel-bg: rgba(5, 5, 5, 0.75);
+  --border-color: #333333;
+  --font-header: 'Inter', sans-serif;
+  --font-data: 'JetBrains Mono', 'Roboto Mono', monospace;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-header);
+  overflow: hidden;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+/* --- LATTICE OS UI CONTAINER --- */
+#ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* Let clicks pass through to map where not on UI */
+  z-index: 10;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* --- UTILITY CLASSES --- */
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+/* --- HUD TOP LEFT --- */
+.hud-header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 15px 25px;
+  border-left: 3px solid var(--accent-cyan);
+}
+
+.hud-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+.hud-header .subtext {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--accent-cyan);
+  letter-spacing: 1px;
+}
+
+/* --- FLOATING CONTROL PANEL --- */
+.control-panel {
+  position: absolute;
+  top: 100px;
+  left: 20px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0;
+  /* No padding on container, handled by sections */
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+}
+
+.panel-section {
+  padding: 20px;
+}
+
+.section-label {
+  display: block;
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+/* --- BUTTONS --- */
+button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-family: var(--font-header);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 12px 16px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #666;
+}
+
+button:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Accent Buttons */
+.btn-blue-force {
+  border-left: 2px solid var(--accent-cyan);
+}
+
+.btn-blue-force:hover {
+  box-shadow: inset 2px 0 0 0 var(--accent-cyan);
+}
+
+.btn-intel {
+  border-left: 2px solid #888;
+}
+
+.btn-danger {
+  border: 1px solid var(--accent-red);
+  color: var(--accent-red);
+  background: rgba(255, 51, 51, 0.05);
+}
+
+.btn-danger:hover {
+  background: rgba(255, 51, 51, 0.15);
+  box-shadow: 0 0 15px rgba(255, 51, 51, 0.2);
+}
+
+/* Status Indicators */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #333;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.status-dot.active {
+  background-color: var(--accent-cyan);
+  /* Default active */
+  box-shadow: 0 0 5px var(--accent-cyan);
+}
+
+/* --- BACK BUTTON (Special) --- */
+#btn-reset {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: auto;
+  background: var(--panel-bg);
+  border: 1px solid var(--accent-amber);
+  color: var(--accent-amber);
+  backdrop-filter: blur(12px);
+  z-index: 20;
+}
+
+/* --- CESIUM OVERRIDES --- */
+.cesium-viewer-bottom {
+  display: none;
+}
+
+/* --- CESIUM SELECTION INDICATOR --- */
+/* .cesium-selection-wrapper logic is handled by Cesium JS defaults. Manual overrides removed to fix centering. */
+
+.cesium-selection-wrapper svg {
+  fill: var(--accent-cyan);
+  stroke: var(--accent-cyan);
+  stroke-width: 1px;
+}
+
+/* --- CESIUM INFO BOX (Traffic Details) --- */
+.cesium-infoBox {
+  top: 50px;
+  background: rgba(10, 10, 10, 0.95);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+  color: var(--text-color);
+  transform: translate(0, 0);
+  transition: opacity 0.2s;
+}
+
+.cesium-infoBox-title {
+  background: rgba(0, 240, 255, 0.1);
+  font-family: var(--font-header);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.cesium-infoBox-body {
+  background: transparent;
+  color: #fff;
+}
+
+/* Custom Close Button ("X") */
+.cesium-infoBox-close {
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  background: transparent;
+  border: none;
+  font-family: 'Arial', sans-serif;
+  font-size: 24px;
+  font-weight: lighter;
+  color: var(--accent-cyan);
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  position: absolute;
+  cursor: pointer;
+}
+
+.cesium-infoBox-close:hover {
+  background: rgba(255, 51, 51, 0.2);
+  color: var(--accent-red);
+  opacity: 1;
+}
+
+.cesium-infoBox-close::after {
+  content: "×";
+  display: block;
+}
+
+/* Hide default SVG if present (depends on version) */
+.cesium-infoBox-close svg {
+  display: none;
+}
+
+/* --- CESIUM NAVIGATION HELP (?) --- */
+.cesium-navigation-help {
+  /* standard positioning */
+  background: rgba(5, 5, 5, 0.9);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  color: var(--text-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  /* Ensure it appears on top */
+}
+
+/* Ensure the button itself is visible if using default Cesium toolbar */
+.cesium-viewer-toolbar {
+  z-index: 1000;
+}
+
+.cesium-navigation-help-instructions {
+  background: transparent;
+  border: none;
+}
+
+.cesium-navigation-button {
+  background: transparent;
+  color: #888;
+  font-family: var(--font-header);
+  font-weight: bold;
+}
+
+.cesium-navigation-button-selected {
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--accent-cyan);
+}
+
+.cesium-click-icon,
+.cesium-touch-icon,
+.cesium-zoom-icon {
+  filter: invert(1) grayscale(1);
+  /* Make white */
+  opacity: 0.7;
+}
+
+/* --- INTRO MODAL --- */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #050505;
+  /* Solid dark initially */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: background 1s ease-in-out;
+}
+
+.modal-overlay.reveal-map {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  /* Slight blur for readability */
+}
+
+.modal-overlay.dismissed {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease-out;
+}
+
+.modal-content {
+  width: 500px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border: 1px solid var(--accent-cyan);
+}
+
+.modal-content h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+}
+
+.modal-content p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #ccc;
+  margin: 0;
+}
+
+.modal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-list li {
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.modal-list strong {
+  color: #fff;
+}
+
+.modal-footer {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#btn-init-system {
+  width: auto;
+  background: var(--accent-cyan);
+  color: #000;
+  font-weight: 700;
+  border: none;
+}
+
+#btn-init-system:hover {
+  background: #fff;
+  box-shadow: 0 0 15px var(--accent-cyan);
+}
+
+#btn-init-system {
+  animation: modalBtnPulse 1.5s infinite;
+}
+
+@keyframes modalBtnPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.8);
+  }
+
+  70% {
+    box-shadow: 0 0 0 15px rgba(0, 240, 255, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 240, 255, 0);
+  }
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #888;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-container input {
+  margin-right: 10px;
+  accent-color: var(--accent-cyan);
+}
+
+/* --- INFO ICON (Top Left) --- */
+/* --- INFO ICON (Top Left) --- */
+#btn-project-info svg {
+  transition: all 0.2s ease;
+  filter: drop-shadow(0 0 2px rgba(0, 240, 255, 0.5));
+}
+
+#btn-project-info:hover svg {
+  filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.8));
+  transform: scale(1.1);
+}
+
+/* --- DIRECTION CONTROLS --- */
+.direction-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.direction-controls button {
+  flex: 1;
+  text-align: center;
+  justify-content: center;
+  padding: 10px 0;
+  margin-bottom: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #444;
+  color: #888;
+}
+
+.direction-controls button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: #666;
+}
+
+.direction-controls button.active {
+  background: rgba(0, 240, 255, 0.1);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+/* --- TOOLTIPS --- */
+.tooltip-container {
+  position: relative;
+  width: 100%;
+}
+
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 10px;
+  font-family: var(--font-data);
+  color: #aaa;
+  margin-left: 8px;
+  cursor: help;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 180px;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  /* Position above */
+  left: 50%;
+  margin-left: -90px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-family: var(--font-data);
+  font-size: 10px;
+  border: 1px solid #444;
+  pointer-events: none;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* --- RADAR SCANNING ANIMATION --- */
+@keyframes scanPulse {
+  0% {
+    background-color: #e67e22;
+    box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.7);
+  }
+
+  50% {
+    background-color: #d35400;
+    box-shadow: 0 0 10px 4px rgba(211, 84, 0, 0.6);
+  }
+
+  100% {
+    background-color: #e67e22;
+    box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.7);
+  }
+}
+
+.scanning-active {
+  animation: scanPulse 1s infinite;
+  pointer-events: none;
+  /* Prevent double clicks */
+}
+
+/* --- PROJECT INFO MODAL STYLES --- */
+#info-modal .modal-content {
+  width: 600px;
+  max-width: 90vw;
+  max-height: 85vh;
+  /* Ensure it fits vertically */
+  overflow-y: auto;
+  /* Scroll if content is too tall */
+  border: 1px solid var(--accent-cyan);
+  background: rgba(10, 10, 10, 0.95);
+  display: flex;
+  flex-direction: column;
+}
+
+#info-modal h3 {
+  color: #fff;
+  font-size: 14px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-left: 2px solid var(--accent-cyan);
+  padding-left: 10px;
+  text-transform: uppercase;
+}

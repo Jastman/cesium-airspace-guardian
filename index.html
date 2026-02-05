@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYC Airspace Guardian</title>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    /* CRITICAL CSS TO PREVENT FOUC (Flash of Unstyled Content) */
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+    }
+
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #050505;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 3D Viewport -->
+  <div id="app"></div>
+
+  <!-- Interface Layer -->
+  <div id="ui-layer">
+
+    <!-- Intro Modal -->
+    <div id="intro-modal" class="modal-overlay">
+      <div class="glass-panel modal-content">
+        <h2>NYC AIRSPACE GUARDIAN // OVERVIEW</h2>
+        <p>This Common Operating Picture (COP) demonstrates advanced situational awareness for urban defense.</p>
+        <ul class="modal-list">
+          <li><strong>Blue Force Tracking:</strong> Live monitoring of friendly assets (SH-60B).</li>
+          <li><strong>Threat Detection:</strong> Analysis of civilian air traffic vs. threats.</li>
+          <li><strong>3D Integration:</strong> Line-of-sight analysis in a photorealistic digital twin.</li>
+        </ul>
+
+        <div class="modal-footer">
+          <label class="checkbox-container">
+            <input type="checkbox" id="dont-show-again">
+            <span class="checkmark"></span>
+            Don't show this again
+          </label>
+          <button id="btn-init-system">INITIALIZE SYSTEM</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Left HUD -->
+    <div class="glass-panel hud-header">
+      <!-- Added Project Info Button -->
+      <h1>NYC Airspace Guardian <span id="btn-project-info" title="About this Project"
+          style="border: none; width: auto; height: auto; display: inline-flex; vertical-align: middle; margin-left: 10px; cursor: pointer;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="11" stroke="#00F0FF" stroke-width="2" />
+            <path d="M12 17V11" stroke="#00F0FF" stroke-width="2" stroke-linecap="round" />
+            <circle cx="12" cy="7" r="1.5" fill="#00F0FF" />
+          </svg>
+        </span></h1>
+      <span class="subtext">SECTOR: MANHATTAN // LIVE FEED</span>
+    </div>
+
+    <!-- PROJECT INFO MODAL (Hidden by default) -->
+    <div id="info-modal" class="modal-overlay" style="display: none;">
+      <div class="glass-panel modal-content">
+        <h2>System Overview</h2>
+        <p><strong>NYC Airspace Guardian</strong> is a real-time situational awareness dashboard designed for monitoring
+          urban airspace traffic.</p>
+
+        <h3>KEY CAPABILITIES</h3>
+        <ul class="modal-list">
+          <li><strong>Live Tracking:</strong> Real-time integration with OpenSky Network API.</li>
+          <li><strong>Threat Isolation:</strong> Automated geofence violation detection (Red Dome).</li>
+          <li><strong>Tactical Visualization:</strong> 3D city integration using Google Photorealistic 3D Tiles.</li>
+        </ul>
+
+        <h3>DATA SOURCES</h3>
+        <ul class="modal-list">
+          <li><strong>Terrain/City:</strong> Google Map Tiles API (Photorealistic 3D Tiles)</li>
+          <li><strong>Live Flight Data:</strong> OpenSky Network API (REST)</li>
+          <li><strong>Assets:</strong> Cesium Ion (SH-60B Seahawk)</li>
+        </ul>
+
+        <h3>CREDITS</h3>
+        <p style="font-size: 12px; color: #888;">Built with CesiumJS. Created by <a
+            href="https://www.linkedin.com/in/jasteinerman/" target="_blank"
+            style="color: var(--accent-cyan); text-decoration: none;">Jake Steinerman</a>.</p>
+
+        <div class="modal-footer" style="justify-content: center;">
+          <button id="btn-close-info" style="width: 200px; text-align: center; border: 1px solid #444;">CLOSE
+            OVERLAY</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Controls -->
+    <div class="control-panel">
+
+      <!-- Section 1: Assets -->
+      <div class="glass-panel panel-section">
+        <span class="section-label">Tactical Assets</span>
+        <button id="btn-drone" class="btn-blue-force">
+          SH-60B Seahawk
+          <span class="status-dot active"></span>
+        </button>
+        <button id="btn-tower" class="btn-intel" style="display: none;">
+          Vantage Point: South
+        </button>
+
+        <span class="section-label" style="margin-top: 10px;">Vantage Points</span>
+        <div class="direction-controls">
+          <button id="btn-view-n">N</button>
+          <button id="btn-view-s" class="active">S</button>
+          <button id="btn-view-e">E</button>
+          <button id="btn-view-w">W</button>
+        </div>
+      </div>
+
+      <!-- Section 2: Intel -->
+      <div class="glass-panel panel-section">
+        <span class="section-label">Live Intelligence</span>
+        <button id="btn-scan">
+          Start Radar Scan
+          <span id="scan-status" class="status-dot"></span>
+        </button>
+      </div>
+
+      <!-- Section 3: Actions -->
+      <!-- Section 3: Actions -->
+      <div id="panel-actions" class="glass-panel panel-section" style="display: none;">
+        <span class="section-label">Command Actions</span>
+        <div class="tooltip-container">
+          <button id="btn-threats" class="btn-danger">
+            Isolate Threats
+            <span class="info-icon" title="Toggle visibility of non-hostile traffic">i</span>
+          </button>
+          <span class="tooltip-text">Toggle visibility of non-hostile traffic to focus on threats.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Global Actions (Contextual) -->
+    <button id="btn-reset" style="display:none;">
+      &lt; Return to Sector
+    </button>
+
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
