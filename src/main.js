@@ -334,8 +334,11 @@ async function fetchFlights() {
       setTimeout(() => { btn.innerText = originalText; btn.style.background = ""; }, 3000);
 
       if (flightEntities.length > 0) {
-        // DISABLE AUTO-ZOOM. Keep camera centered on Seahawk.
-        // viewer.flyTo(flightEntities, { ... });
+        // RESTORED AUTO-ZOOM (User Request)
+        viewer.flyTo(flightEntities, {
+          duration: 2.0,
+          offset: new Cesium.HeadingPitchRange(0, -0.5, 5000)
+        });
 
         // REVEAL COMMAND ACTIONS
         document.getElementById('panel-actions').style.display = 'block';
@@ -361,21 +364,21 @@ let hiddenBillboardEntity = null;
 const FALLBACK_ASSET_ID = 4423404; // Paper Airplane
 
 // --- AIRCRAFT ASSET MAP ---
-const AIRCRAFT_ASSETS = {
+const AIRCRAFT_ASSET_DEFS = {
   // Generic / Default
-  "Helicopter / UAV": 4423338, // Bell 429 (Generic Heli)
-  "Bell 429": 4423338,
-  "General Aviation (Cessna/Piper)": 4423405,
+  "Helicopter / UAV": { id: 4423338, scale: 10.0 },     // Scale UP
+  "Bell 429": { id: 4423338, scale: 10.0 },             // Scale UP
+  "General Aviation (Cessna/Piper)": { id: 4423405, scale: 0.2 }, // Scale DOWN
 
-  // Commercial Liners
-  "JetBlue (Airbus A320)": 4423340,
-  "United (Boeing 737 MAX)": 4423342,
-  "American (Boeing 737)": 4423342,
-  "Delta (Airbus A321)": 4423346,
-  "Republic (Embraer E175)": 4423348,
-  "Endeavor (CRJ-900)": 4423351,
-  "FedEx (Boeing 767)": 4423352,
-  "UPS (MD-11F)": 4423353
+  // Commercial Liners (Default Scale 1.0)
+  "JetBlue (Airbus A320)": { id: 4423340, scale: 1.0 },
+  "United (Boeing 737 MAX)": { id: 4423342, scale: 1.0 },
+  "American (Boeing 737)": { id: 4423342, scale: 1.0 },
+  "Delta (Airbus A321)": { id: 4423346, scale: 1.0 },
+  "Republic (Embraer E175)": { id: 4423348, scale: 1.0 },
+  "Endeavor (CRJ-900)": { id: 4423351, scale: 1.0 },
+  "FedEx (Boeing 767)": { id: 4423352, scale: 1.0 },
+  "UPS (MD-11F)": { id: 4423353, scale: 1.0 }
 };
 
 // --- DYNAMIC LOAD/UNLOAD FUNCTIONS ---
@@ -387,17 +390,21 @@ async function loadAircraftModel(entity) {
   if (!entity || !entity.userData || !entity.userData.category === 'flight') return;
 
   // 2. Determine Asset ID
-  // Parse the "ID Estimate" from the description or userData if available.
   const typeStr = entity.userData.aircraftType || "Unknown";
-  let assetId = AIRCRAFT_ASSETS[typeStr];
+  let assetDef = AIRCRAFT_ASSET_DEFS[typeStr];
+  let assetId, scaleFactor;
 
-  if (!assetId) {
+  if (assetDef) {
+    assetId = assetDef.id;
+    scaleFactor = assetDef.scale;
+  } else {
     console.log(`No specific model for: ${typeStr}. Using Fallback.`);
     assetId = FALLBACK_ASSET_ID;
+    scaleFactor = 1.0;
   }
 
   try {
-    console.log(`Loading 3D Model for ${typeStr} (Asset ID: ${assetId})...`);
+    console.log(`Loading 3D Model for ${typeStr} (Asset ID: ${assetId} | Scale: ${scaleFactor})...`);
 
     // 3. Hide 2D Icon
     hiddenBillboardEntity = entity;
@@ -431,13 +438,7 @@ async function loadAircraftModel(entity) {
         const rotationMatrix = Cesium.Matrix4.fromRotationTranslation(rotation);
 
         // 3. Scale Matrix
-        // Fix for Bell 429 (4423338) being too small? 
-        let scale = 1.0;
-        if (assetId === 4423338) {
-          scale = 50.0; // Try massive scale up to verify visibility
-        }
-
-        const scaleMatrix = Cesium.Matrix4.fromUniformScale(scale);
+        const scaleMatrix = Cesium.Matrix4.fromUniformScale(scaleFactor);
 
         // 4. Combine: ModelMatrix = Position * Rotation * Scale
         const intermediate = Cesium.Matrix4.multiply(enuMatrix, rotationMatrix, new Cesium.Matrix4());
