@@ -431,7 +431,12 @@ async function loadAircraftModel(entity) {
         const rotationMatrix = Cesium.Matrix4.fromRotationTranslation(rotation);
 
         // 3. Scale Matrix
-        const scale = 1.0;
+        // Fix for Bell 429 (4423338) being too small? 
+        let scale = 1.0;
+        if (assetId === 4423338) {
+          scale = 50.0; // Try massive scale up to verify visibility
+        }
+
         const scaleMatrix = Cesium.Matrix4.fromUniformScale(scale);
 
         // 4. Combine: ModelMatrix = Position * Rotation * Scale
