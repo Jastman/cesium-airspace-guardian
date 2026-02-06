@@ -106,6 +106,7 @@ try {
 
 // B. The Holographic Helicopter
 let helicopterTileset;
+let seahawkEntity; // GLOBAL SCOPE FOR CAMERA ACCESS
 try {
   helicopterTileset = await Cesium.Cesium3DTileset.fromIonAssetId(HELICOPTER_ID);
 
@@ -132,7 +133,7 @@ try {
   });
 
   // TACTICAL LABEL (HUD MODE - ALWAYS ON TOP)
-  const seahawkEntity = viewer.entities.add({
+  seahawkEntity = viewer.entities.add({
     // 1. Height: Moved up to +50m to clear the rotors
     position: Cesium.Cartesian3.fromDegrees(START_LONG, START_LAT, START_HEIGHT), // Focus on the HELICOPTER (base), not the label above it
     label: {
@@ -335,9 +336,12 @@ async function fetchFlights() {
 
       if (flightEntities.length > 0) {
         // RESTORED AUTO-ZOOM (User Request)
-        viewer.flyTo(flightEntities, {
+        // Modified to keep Seahawk centered but zoom out
+        const target = seahawkEntity || flightEntities;
+
+        viewer.flyTo(target, {
           duration: 2.0,
-          offset: new Cesium.HeadingPitchRange(0, -0.5, 5000)
+          offset: new Cesium.HeadingPitchRange(0, -0.5, 8000) // 8km Zoom out 
         });
 
         // REVEAL COMMAND ACTIONS
